@@ -4,6 +4,7 @@ import { db } from "@/db/client";
 import { sessionsTable, usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import z from "zod";
+import { cache } from "react";
 
 export type SessionUser = Awaited<ReturnType<typeof getCurrentUser>>;
 
@@ -33,7 +34,7 @@ export async function createSession(userId: string): Promise<string | null> {
   return null;
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("session");
 
@@ -71,7 +72,7 @@ export async function getCurrentUser() {
     .where(eq(usersTable.id, session.userId));
 
   return user ?? null;
-}
+});
 
 export async function clearSessionCookie() {
   const cookieStore = await cookies();
