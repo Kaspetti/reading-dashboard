@@ -1,4 +1,5 @@
 allowBuilds:
+  bcrypt: true
   bun: set this to true or false
   esbuild: true
   sharp: true

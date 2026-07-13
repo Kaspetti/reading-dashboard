@@ -1,7 +1,7 @@
-import { pgTable, integer, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, varchar, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid().primaryKey().defaultRandom(),
   username: varchar({ length: 255 }).notNull().unique(),
   displayName: varchar({ length: 255 }),
   email: varchar({ length: 255 }).notNull().unique(),
@@ -12,4 +12,10 @@ export const usersTable = pgTable("users", {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
+});
+
+export const sessionsTable = pgTable("sessions", {
+  sessionId: uuid().primaryKey(),
+  userId: uuid().notNull(),
+  expiresAt: timestamp().notNull(),
 });

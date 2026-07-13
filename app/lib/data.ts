@@ -1,8 +1,6 @@
 import { usersTable } from "@/db/schema";
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
-
-const db = drizzle(process.env.DATABASE_URL!);
+import { db } from "@/db/client";
 
 export async function fetchUsers() {
   const users = await db.select().from(usersTable);
