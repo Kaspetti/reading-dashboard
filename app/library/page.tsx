@@ -3,7 +3,6 @@ import LibraryClient from "./LibraryClient";
 
 export default async function Library() {
   const books = await fetchBooks();
-  console.log(books);
 
   return (
     <LibraryClient>
