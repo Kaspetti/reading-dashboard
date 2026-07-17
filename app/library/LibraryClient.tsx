@@ -2,6 +2,8 @@
 
 import React, { useCallback, useState } from "react";
 import NewBookDialog from "./NewBookDialog";
+import { Button } from "@headlessui/react";
+import BookSearch from "./BookSearch";
 
 export default function LibraryClient({
   children,
@@ -13,10 +15,11 @@ export default function LibraryClient({
 
   return (
     <div className="p-2">
-      <div className="flex justify-center">
-        <button onClick={() => setIsOpen(true)} className="border-1 p-2">
+      <div className="flex justify-end">
+        <BookSearch />
+        <Button onClick={() => setIsOpen(true)} className="border-1 p-2">
           New Book
-        </button>
+        </Button>
 
         <NewBookDialog
           key={isOpen ? "open" : "closed"}
