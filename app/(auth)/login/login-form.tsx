@@ -1,6 +1,6 @@
 "use client";
 
-import { LoginState, loginUser } from "@/app/lib/actions";
+import { LoginState, loginUser } from "@/app/lib/actions/auth";
 import FieldError from "@/app/ui/field-error";
 import { useActionState } from "react";
 

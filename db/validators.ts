@@ -3,7 +3,7 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { usersTable } from "./schema";
+import { booksTable, usersTable } from "./schema";
 import { z } from "zod";
 
 export const insertUserSchema = createInsertSchema(usersTable, {
@@ -33,4 +33,25 @@ export const createUserFormSchema = insertUserSchema
 export const loginUserFormSchema = z.object({
   identifier: z.string().min(1, "Username or Email is required."),
   password: z.string().min(1, "Password is required."),
+});
+
+export const insertBookSchema = createInsertSchema(booksTable, {
+  title: z
+    .string()
+    .min(1, "Book title is required.")
+    .max(200, "Book title must not exceed 200 characters."),
+  author: z
+    .string()
+    .min(1, "Author is required.")
+    .max(70, "Author must not exceed 70 characters."),
+  pages: z.coerce
+    .number({ error: "Pages must be a number." })
+    .min(1, "Page count must be greater than 0."),
+});
+export const selectBookSchema = createSelectSchema(booksTable);
+export const updateBookSchema = createUpdateSchema(booksTable);
+
+export const createBookFormSchema = insertBookSchema.omit({
+  createdAt: true,
+  updatedAt: true,
 });

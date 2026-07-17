@@ -7,10 +7,10 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import { eq, or } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { clearSessionCookie, createSession } from "./session";
+import { clearSessionCookie, createSession } from "@/app/lib/session";
 import { db } from "@/db/client";
 
-export type State = {
+export type RegisterState = {
   success?: string;
   error?: string;
   validationErrors?: Record<string, string[]>;
@@ -23,10 +23,10 @@ export type LoginState = {
   identifier?: string;
 };
 
-export async function createUser(
-  _prevState: State,
+export async function registerUser(
+  _prevState: RegisterState,
   formData: FormData,
-): Promise<State> {
+): Promise<RegisterState> {
   const parsed = createUserFormSchema.safeParse({
     username: formData.get("username"),
     displayName: formData.get("display-name") || undefined,

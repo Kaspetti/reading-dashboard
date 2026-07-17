@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { logoutUser } from "../lib/actions";
-import { SessionUser } from "../lib/session";
+import { logoutUser } from "@/app/lib/actions/auth";
+import { SessionUser } from "@/app/lib/session";
 
 export default function Header({ user }: { user: SessionUser }) {
   return (
@@ -8,6 +8,12 @@ export default function Header({ user }: { user: SessionUser }) {
       <div className="flex justify-left">
         <Link href="/" className="pl-5 pr-5 border-1">
           Home
+        </Link>
+        <Link href="/dashboard" className="pl-5 pr-5 border-1">
+          Dashboard
+        </Link>
+        <Link href="/library" className="pl-5 pr-5 border-1">
+          Library
         </Link>
       </div>
 

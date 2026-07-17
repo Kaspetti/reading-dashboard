@@ -1,12 +1,12 @@
 "use client";
 
-import { createUser, State } from "@/app/lib/actions";
+import { registerUser, RegisterState } from "@/app/lib/actions/auth";
 import FieldError from "@/app/ui/field-error";
 import { useActionState } from "react";
 
 export default function RegisterForm() {
-  const initialState: State = {};
-  const [state, formAction] = useActionState(createUser, initialState);
+  const initialState: RegisterState = {};
+  const [state, formAction] = useActionState(registerUser, initialState);
 
   return (
     <form action={formAction}>
@@ -43,6 +43,7 @@ export default function RegisterForm() {
         Register
       </button>
       {state.success && <p>{state.success}</p>}
+      {state.error && <p className="text-red">{state.error}</p>}
     </form>
   );
 }
