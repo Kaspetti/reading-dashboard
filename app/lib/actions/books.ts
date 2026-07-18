@@ -53,7 +53,6 @@ export async function searchBooks(query: string, limit = 10) {
       id: booksTable.id,
       title: booksTable.title,
       author: booksTable.author,
-      similarity: sql<number>`word_similarity(${query}, ${booksTable.title})`,
     })
     .from(booksTable)
     .where(
