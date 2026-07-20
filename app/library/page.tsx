@@ -1,16 +1,16 @@
-import { fetchBooks } from "@/app/lib/data";
 import LibraryClient from "./LibraryClient";
+import { getOwnedBooks } from "../lib/actions/books";
 
 export default async function Library() {
-  const books = await fetchBooks();
+  const ownedBooks = await getOwnedBooks();
 
   return (
-    <LibraryClient>
+    <LibraryClient ownedBooks={new Set(ownedBooks.map((o) => o.id))}>
       <div>
         <h1 className="text-2xl font-bold">Owned Books:</h1>
-        {books.length > 0 ? (
+        {ownedBooks.length > 0 ? (
           <ul>
-            {books.map((book) => (
+            {ownedBooks.map((book) => (
               <li key={book.id}>
                 {book.title} by {book.author} ({book.pages}p.)
               </li>

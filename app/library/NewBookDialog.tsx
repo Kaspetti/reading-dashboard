@@ -12,7 +12,7 @@ import {
   Button,
 } from "@headlessui/react";
 import { BookState, createBook } from "../lib/actions/books";
-import { useActionState, useCallback, useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import FieldError from "../ui/field-error";
 
 interface NewBookDialogProps {
@@ -27,8 +27,6 @@ export default function NewBookDialog({ isOpen, onClose }: NewBookDialogProps) {
     initialState,
   );
 
-  const handleClose = useCallback(() => setIsOpen(false), []);
-
   useEffect(() => {
     if (state.success) {
       onClose();
@@ -37,7 +35,7 @@ export default function NewBookDialog({ isOpen, onClose }: NewBookDialogProps) {
 
   return (
     <>
-      <Dialog open={isOpen} onClose={() => onClose()} className="relative z-50">
+      <Dialog open={isOpen} onClose={onClose} className="relative z-50">
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 border border-taupe-700 rounded-lg bg-taupe-100 p-12 text-taupe-500">

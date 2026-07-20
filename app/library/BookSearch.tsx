@@ -5,8 +5,13 @@ import { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { searchBooks, Books } from "@/app/lib/actions/books";
 import NewBookDialog from "./NewBookDialog";
+import BookSearchRow from "./BookSearchRow";
 
-export default function BookSearch() {
+export default function BookSearch({
+  ownedBooks,
+}: {
+  ownedBooks: Set<number>;
+}) {
   const [results, setResults] = useState<Books>([]);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +23,7 @@ export default function BookSearch() {
   }, 200);
 
   return (
-    <div className="flex flex-col w-100">
+    <div className="flex flex-col w-150">
       <Input
         type="text"
         placeholder="Search books..."
@@ -27,9 +32,12 @@ export default function BookSearch() {
       />
       <div className="border p-2">
         {results.map((book) => (
-          <li className="list-none border-b" key={book.id}>
-            {book.title}
-          </li>
+          <BookSearchRow
+            bookTitle={book.title}
+            bookId={book.id}
+            owned={ownedBooks.has(book.id)}
+            key={book.id}
+          />
         ))}
         <button
           onClick={() => setIsOpen(true)}

@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/db/client";
-import { books } from "@/db/schema";
+import { books, ownedBooks } from "@/db/schema";
 import { createBookFormSchema } from "@/db/validators";
 import { desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
+import { getCurrentUser } from "../session";
 
 export type BookState = {
   success?: string;
@@ -60,4 +61,43 @@ export async function searchBooks(query: string, limit = 10) {
     )
     .orderBy(desc(sql`word_similarity(${query}, ${books.title})`))
     .limit(limit);
+}
+
+export async function getOwnedBooks() {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const result = await db.query.books.findMany({
+    where: {
+      owners: {
+        id: user.id,
+      },
+    },
+  });
+
+  return result;
+}
+
+export async function addOwnedBook(
+  bookId: number,
+  _prevState: BookState,
+  _formData: FormData,
+): Promise<BookState> {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { error: "User not logged in." };
+  }
+
+  try {
+    await db.insert(ownedBooks).values({
+      userId: user.id,
+      bookId: bookId,
+    });
+  } catch {
+    return { error: "Database error: could not add book to owned." };
+  }
+
+  revalidatePath("/library");
+
+  return { success: "Successfully added book." };
 }
