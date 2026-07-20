@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/client";
-import { booksTable } from "@/db/schema";
+import { books } from "@/db/schema";
 import { createBookFormSchema } from "@/db/validators";
 import { desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -33,7 +33,7 @@ export async function createBook(
   }
 
   try {
-    await db.insert(booksTable).values({
+    await db.insert(books).values({
       ...parsed.data,
     });
   } catch {
@@ -50,14 +50,14 @@ export async function searchBooks(query: string, limit = 10) {
 
   return db
     .select({
-      id: booksTable.id,
-      title: booksTable.title,
-      author: booksTable.author,
+      id: books.id,
+      title: books.title,
+      author: books.author,
     })
-    .from(booksTable)
+    .from(books)
     .where(
-      sql`${booksTable.title} ILIKE ${"%" + query + "%"} OR ${booksTable.title} <% ${query}`,
+      sql`${books.title} ILIKE ${"%" + query + "%"} OR ${books.title} <% ${query}`,
     )
-    .orderBy(desc(sql`word_similarity(${query}, ${booksTable.title})`))
+    .orderBy(desc(sql`word_similarity(${query}, ${books.title})`))
     .limit(limit);
 }

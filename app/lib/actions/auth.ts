@@ -2,7 +2,7 @@
 
 import { createUserFormSchema, loginUserFormSchema } from "@/db/validators";
 import z from "zod";
-import { usersTable } from "@/db/schema";
+import { users } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
 import { eq, or } from "drizzle-orm";
@@ -45,7 +45,7 @@ export async function registerUser(
   const passwordHash = await bcrypt.hash(password, 12);
 
   try {
-    await db.insert(usersTable).values({
+    await db.insert(users).values({
       ...userData,
       passwordHash: passwordHash,
     });
@@ -77,10 +77,8 @@ export async function loginUser(
 
   const [user] = await db
     .select()
-    .from(usersTable)
-    .where(
-      or(eq(usersTable.username, identifier), eq(usersTable.email, identifier)),
-    );
+    .from(users)
+    .where(or(eq(users.username, identifier), eq(users.email, identifier)));
 
   const dummyHash =
     "$2a$12$BxA27TU60wtC3uEvPBNeiuh3NxkjpH8icbntLhhBpaehOX5zvPPW2";

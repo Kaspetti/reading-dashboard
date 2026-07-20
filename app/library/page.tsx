@@ -7,7 +7,7 @@ export default async function Library() {
   return (
     <LibraryClient>
       <div>
-        <h1 className="text-2xl font-bold">Books:</h1>
+        <h1 className="text-2xl font-bold">Owned Books:</h1>
         {books.length > 0 ? (
           <ul>
             {books.map((book) => (

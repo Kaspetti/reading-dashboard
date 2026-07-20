@@ -3,18 +3,18 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { booksTable, usersTable } from "./schema";
+import { books, users } from "./schema";
 import { z } from "zod";
 
-export const insertUserSchema = createInsertSchema(usersTable, {
+export const insertUserSchema = createInsertSchema(users, {
   email: z.email("Must be a valid email."),
   username: z
     .string()
     .min(3, "Username must be between 3 and 15 characters.")
     .max(15, "Username must be between 3 and 15 characters."),
 });
-export const selectUserSchema = createSelectSchema(usersTable);
-export const updateUserSchema = createUpdateSchema(usersTable);
+export const selectUserSchema = createSelectSchema(users);
+export const updateUserSchema = createUpdateSchema(users);
 
 export const createUserFormSchema = insertUserSchema
   .omit({
@@ -35,7 +35,7 @@ export const loginUserFormSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
-export const insertBookSchema = createInsertSchema(booksTable, {
+export const insertBookSchema = createInsertSchema(books, {
   title: z
     .string()
     .min(1, "Book title is required.")
@@ -48,8 +48,8 @@ export const insertBookSchema = createInsertSchema(booksTable, {
     .number({ error: "Pages must be a number." })
     .min(1, "Page count must be greater than 0."),
 });
-export const selectBookSchema = createSelectSchema(booksTable);
-export const updateBookSchema = createUpdateSchema(booksTable);
+export const selectBookSchema = createSelectSchema(books);
+export const updateBookSchema = createUpdateSchema(books);
 
 export const createBookFormSchema = insertBookSchema.omit({
   createdAt: true,

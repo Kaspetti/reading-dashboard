@@ -1,8 +1,9 @@
 import "dotenv/config";
-import { usersTable } from "./schema";
+import { users } from "./schema";
+import { db } from "./client";
 
 async function main() {
-  const users: (typeof usersTable.$inferInsert)[] = [
+  const insert: (typeof users.$inferInsert)[] = [
     {
       username: "testpeti",
       email: "testpeti@testread.com",
@@ -53,8 +54,8 @@ async function main() {
     },
   ];
 
-  await db.insert(usersTable).values(users);
-  console.log(`${users.length} test users created!`);
+  await db.insert(users).values(insert);
+  console.log(`${insert.length} test users created!`);
 }
 
 main().catch((err) => {

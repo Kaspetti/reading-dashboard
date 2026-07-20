@@ -1,13 +1,13 @@
-import { booksTable, usersTable } from "@/db/schema";
+import { books, users } from "@/db/schema";
 import "dotenv/config";
 import { db } from "@/db/client";
 
 export async function fetchUsers() {
-  const users = await db.select().from(usersTable);
-  return users;
+  const result = await db.select().from(users);
+  return result;
 }
 
 export async function fetchBooks() {
-  const books = await db.select().from(booksTable);
-  return books;
+  const result = await db.select().from(books);
+  return result;
 }

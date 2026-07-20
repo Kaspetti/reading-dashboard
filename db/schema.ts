@@ -8,7 +8,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable("users", {
+export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   username: text().notNull().unique(),
   displayName: text(),
@@ -22,13 +22,13 @@ export const usersTable = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
-export const sessionsTable = pgTable("sessions", {
+export const sessions = pgTable("sessions", {
   sessionId: uuid().primaryKey(),
   userId: uuid().notNull(),
   expiresAt: timestamp().notNull(),
 });
 
-export const booksTable = pgTable("books", {
+export const books = pgTable("books", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   title: text().notNull(),
   author: text().notNull(),
@@ -40,16 +40,16 @@ export const booksTable = pgTable("books", {
     .$onUpdate(() => new Date()),
 });
 
-export const ownedBooksTable = pgTable(
+export const ownedBooks = pgTable(
   "owned_books",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userId: uuid()
       .notNull()
-      .references(() => usersTable.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     bookId: integer()
       .notNull()
-      .references(() => booksTable.id, { onDelete: "restrict" }),
+      .references(() => books.id, { onDelete: "restrict" }),
     createdAt: timestamp().notNull().defaultNow(),
   },
   (table) => [

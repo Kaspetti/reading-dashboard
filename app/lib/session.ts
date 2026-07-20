@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { db } from "@/db/client";
-import { sessionsTable, usersTable } from "@/db/schema";
+import { sessions, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { cache } from "react";
@@ -14,7 +14,7 @@ export async function createSession(userId: string): Promise<string | null> {
   const cookieStore = await cookies();
 
   try {
-    await db.insert(sessionsTable).values({
+    await db.insert(sessions).values({
       sessionId: sessionId,
       userId: userId,
       expiresAt: expiresAt,
@@ -49,27 +49,27 @@ export const getCurrentUser = cache(async () => {
 
   const [session] = await db
     .select()
-    .from(sessionsTable)
-    .where(eq(sessionsTable.sessionId, parsed.data));
+    .from(sessions)
+    .where(eq(sessions.sessionId, parsed.data));
 
   if (!session || session.expiresAt < new Date()) {
     if (session) {
       await db
-        .delete(sessionsTable)
-        .where(eq(sessionsTable.sessionId, session.sessionId));
+        .delete(sessions)
+        .where(eq(sessions.sessionId, session.sessionId));
     }
     return null;
   }
 
   const [user] = await db
     .select({
-      id: usersTable.id,
-      username: usersTable.username,
-      displayName: usersTable.displayName,
-      avatar: usersTable.avatar,
+      id: users.id,
+      username: users.username,
+      displayName: users.displayName,
+      avatar: users.avatar,
     })
-    .from(usersTable)
-    .where(eq(usersTable.id, session.userId));
+    .from(users)
+    .where(eq(users.id, session.userId));
 
   return user ?? null;
 });
@@ -87,9 +87,7 @@ export async function clearSessionCookie() {
     return null;
   }
 
-  await db
-    .delete(sessionsTable)
-    .where(eq(sessionsTable.sessionId, parsed.data));
+  await db.delete(sessions).where(eq(sessions.sessionId, parsed.data));
 
   cookieStore.delete("session");
 }
