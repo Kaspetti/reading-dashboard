@@ -1,5 +1,6 @@
 import LibraryClient from "./LibraryClient";
 import { getOwnedBooks } from "../lib/actions/books";
+import OwnedBookRow from "./OwnedBookRow";
 
 export default async function Library() {
   const ownedBooks = await getOwnedBooks();
@@ -9,13 +10,11 @@ export default async function Library() {
       <div>
         <h1 className="text-2xl font-bold">Owned Books:</h1>
         {ownedBooks.length > 0 ? (
-          <ul>
+          <div>
             {ownedBooks.map((book) => (
-              <li key={book.id}>
-                {book.title} by {book.author} ({book.pages}p.)
-              </li>
+              <OwnedBookRow book={book} key={book.id} />
             ))}
-          </ul>
+          </div>
         ) : (
           <p>No books yet.</p>
         )}

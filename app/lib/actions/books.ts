@@ -3,7 +3,7 @@
 import { db } from "@/db/client";
 import { books, ownedBooks } from "@/db/schema";
 import { createBookFormSchema } from "@/db/validators";
-import { desc, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { getCurrentUser } from "../session";
@@ -14,6 +14,7 @@ export type BookState = {
   validationErrors?: Record<string, string[]>;
 };
 
+export type Book = typeof books.$inferSelect;
 export type Books = Awaited<ReturnType<typeof searchBooks>>;
 
 export async function createBook(
@@ -85,7 +86,7 @@ export async function addOwnedBook(
 ): Promise<BookState> {
   const user = await getCurrentUser();
   if (!user) {
-    return { error: "User not logged in." };
+    return { error: "Must be logged in to add owned book." };
   }
 
   try {
@@ -99,5 +100,30 @@ export async function addOwnedBook(
 
   revalidatePath("/library");
 
-  return { success: "Successfully added book." };
+  return { success: "Successfully added book to owned." };
+}
+
+export async function removeOwnedBook(
+  bookId: number,
+  _prevState: BookState,
+  _formData: FormData,
+): Promise<BookState> {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { error: "Must be logged in to remove owned book." };
+  }
+
+  try {
+    await db
+      .delete(ownedBooks)
+      .where(
+        and(eq(ownedBooks.bookId, bookId), eq(ownedBooks.userId, user.id)),
+      );
+  } catch {
+    return { error: "Database error: coould not remove book from owned." };
+  }
+
+  revalidatePath("/library");
+
+  return { success: "Successfully removed book from owned." };
 }
