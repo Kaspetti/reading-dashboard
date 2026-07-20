@@ -15,6 +15,27 @@
       "when": 1784015917091,
       "tag": "0001_overjoyed_jane_foster",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784533012466,
+      "tag": "0002_wooden_bloodstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784539344826,
+      "tag": "0003_useful_prowler",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784539500746,
+      "tag": "0004_rainy_daredevil",
+      "breakpoints": true
     }
   ]
 }

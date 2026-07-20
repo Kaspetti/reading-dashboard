@@ -1,4 +1,12 @@
-import { pgTable, timestamp, uuid, integer, text } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  timestamp,
+  uuid,
+  integer,
+  text,
+  unique,
+  index,
+} from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -31,3 +39,21 @@ export const booksTable = pgTable("books", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+export const ownedBooksTable = pgTable(
+  "owned_books",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userId: uuid()
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    bookId: integer()
+      .notNull()
+      .references(() => booksTable.id, { onDelete: "restrict" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    unique().on(table.userId, table.bookId),
+    index().on(table.userId),
+  ],
+);
