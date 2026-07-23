@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { db, pool } from "@/db/client";
-import { books, bookVerificationAttempts } from "@/db/schema";
+import { works, bookVerificationAttempts } from "@/db/schema";
 import { and, eq, isNotNull, not, sql } from "drizzle-orm";
 import z from "zod";
 
@@ -19,8 +19,8 @@ const OpenLibraryResponseSchema = z.record(z.string(), OpenLibraryBookSchema);
 async function verifyBooks() {
   const unverifiedBooks = await db
     .select()
-    .from(books)
-    .where(and(isNotNull(books.isbn), not(books.verified)));
+    .from(works)
+    .where(and(isNotNull(works.isbn), not(works.verified)));
 
   if (unverifiedBooks.length == 0) {
     return;
@@ -31,7 +31,7 @@ async function verifyBooks() {
   }
 }
 
-async function verifyBatch(batch: (typeof books.$inferSelect)[]) {
+async function verifyBatch(batch: (typeof works.$inferSelect)[]) {
   const url = new URL(OPENLIBRARY_BASE_URL);
   url.searchParams.set(
     "bibkeys",
@@ -76,13 +76,13 @@ async function verifyBatch(batch: (typeof books.$inferSelect)[]) {
 
     await db.transaction(async (tx) => {
       await tx
-        .update(books)
+        .update(works)
         .set({
           verified: true,
           title: match.title ?? "",
           author: match.authors?.[0]?.name ?? "",
         })
-        .where(eq(books.id, book.id));
+        .where(eq(works.id, book.id));
 
       await tx
         .delete(bookVerificationAttempts)
