@@ -47,6 +47,12 @@ export const insertBookSchema = createInsertSchema(books, {
   pages: z.coerce
     .number({ error: "Pages must be a number." })
     .min(1, "Page count must be greater than 0."),
+  isbn: z
+    .string()
+    .transform((val) => val.replaceAll("-", "").toUpperCase().trim())
+    .refine((val) => val.length == 0 || /^(\d{13}|\d{9}[0-9X])$/.test(val), {
+      error: "ISBN must follow ISBN-10 or ISBN-13 format.",
+    }),
 });
 export const selectBookSchema = createSelectSchema(books);
 export const updateBookSchema = createUpdateSchema(books);

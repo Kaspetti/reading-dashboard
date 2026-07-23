@@ -33,6 +33,7 @@ export const books = pgTable("books", {
   title: text().notNull(),
   author: text().notNull(),
   pages: integer().notNull(),
+  isbn: text().unique(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp()
     .notNull()
