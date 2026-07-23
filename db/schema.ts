@@ -35,7 +35,7 @@ export const works = pgTable("works", {
   author: text().notNull(),
   pages: integer().notNull(),
   isbn: text().unique(),
-  verified: boolean().default(false),
+  verified: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp()
     .notNull()
@@ -45,6 +45,17 @@ export const works = pgTable("works", {
 
 export const editions = pgTable("editions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  workId: integer()
+    .notNull()
+    .references(() => works.id, { onDelete: "cascade" }),
+  isbn: text().unique(),
+  verified: boolean().notNull().default(false),
+  pages: integer().notNull(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp()
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const ownedBooks = pgTable(
