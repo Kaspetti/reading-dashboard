@@ -74,6 +74,16 @@ export default function NewBookDialog({ isOpen, onClose }: NewBookDialogProps) {
                     <FieldError name="pages" errors={state.validationErrors} />
                   </Field>
                 </div>
+                <Field>
+                  <Label className="block font-semibold">ISBN</Label>
+                  <Input
+                    className="mt-1 block w-full border-2 border-taupe-300 rounded-lg outline-hidden p-1 focus:border-taupe-500"
+                    name="isbn"
+                    type="text"
+                    placeholder="9780141036144"
+                  />
+                  <FieldError name="isbn" errors={state.validationErrors} />
+                </Field>
                 <div className="flex gap-4 justify-end">
                   <Button
                     type="button"

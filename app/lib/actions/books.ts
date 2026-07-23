@@ -14,8 +14,10 @@ export type BookState = {
   validationErrors?: Record<string, string[]>;
 };
 
-export type Book = typeof books.$inferSelect;
-export type Books = Awaited<ReturnType<typeof searchBooks>>;
+export type BooksSearch = Awaited<ReturnType<typeof searchBooks>>;
+export type BookSearch = BooksSearch[number];
+export type OwnedBooks = Awaited<ReturnType<typeof getOwnedBooks>>;
+export type OwnedBook = OwnedBooks[number];
 
 export async function createBook(
   _prevState: BookState,
@@ -25,6 +27,7 @@ export async function createBook(
     title: formData.get("title"),
     author: formData.get("author"),
     pages: formData.get("pages"),
+    isbn: formData.get("isbn"),
   });
 
   if (!parsed.success) {
@@ -54,11 +57,13 @@ export async function searchBooks(query: string, limit = 10) {
     .select({
       id: books.id,
       title: books.title,
-      author: books.author,
     })
     .from(books)
     .where(
-      sql`${books.title} ILIKE ${"%" + query + "%"} OR ${books.title} <% ${query}`,
+      and(
+        books.verified,
+        sql`${books.title} ILIKE ${"%" + query + "%"} OR ${books.title} <% ${query}`,
+      ),
     )
     .orderBy(desc(sql`word_similarity(${query}, ${books.title})`))
     .limit(limit);
@@ -69,6 +74,11 @@ export async function getOwnedBooks() {
   if (!user) return [];
 
   const result = await db.query.books.findMany({
+    columns: {
+      id: true,
+      title: true,
+      verified: true,
+    },
     where: {
       owners: {
         id: user.id,

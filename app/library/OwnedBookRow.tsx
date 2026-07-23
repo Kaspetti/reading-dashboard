@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { Book, BookState, removeOwnedBook } from "@/app/lib/actions/books";
+import { BookState, OwnedBook, removeOwnedBook } from "@/app/lib/actions/books";
 import { useActionState } from "react";
 
-export default function OwnedBookRow({ book }: { book: Book }) {
+export default function OwnedBookRow({ book }: { book: OwnedBook }) {
   const initialState: BookState = {};
   const removeBookById = removeOwnedBook.bind(null, book.id);
   const [state, formAction, isPending] = useActionState(
@@ -14,7 +14,10 @@ export default function OwnedBookRow({ book }: { book: Book }) {
 
   return (
     <div className="flex justify-between w-150">
-      <div>{book.title}</div>
+      <div>
+        {book.title}
+        {!book.verified && <span className="text-gray-500"> unverified</span>}
+      </div>
       <form action={formAction}>
         <Button
           type="submit"

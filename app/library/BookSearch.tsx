@@ -3,7 +3,7 @@
 import { Input } from "@headlessui/react";
 import { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { searchBooks, Books } from "@/app/lib/actions/books";
+import { searchBooks, BooksSearch } from "@/app/lib/actions/books";
 import NewBookDialog from "./NewBookDialog";
 import BookSearchRow from "./BookSearchRow";
 
@@ -12,7 +12,7 @@ export default function BookSearch({
 }: {
   ownedBooks: Set<number>;
 }) {
-  const [results, setResults] = useState<Books>([]);
+  const [results, setResults] = useState<BooksSearch>([]);
 
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = useCallback(() => setIsOpen(false), []);
@@ -33,8 +33,7 @@ export default function BookSearch({
       <div className="border p-2">
         {results.map((book) => (
           <BookSearchRow
-            bookTitle={book.title}
-            bookId={book.id}
+            book={book}
             owned={ownedBooks.has(book.id)}
             key={book.id}
           />

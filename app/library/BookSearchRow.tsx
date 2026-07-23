@@ -1,20 +1,18 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { addOwnedBook, BookState } from "../lib/actions/books";
+import { addOwnedBook, BookSearch, BookState } from "../lib/actions/books";
 import { useActionState } from "react";
 
 export default function BookSearchRow({
-  bookTitle,
-  bookId,
+  book,
   owned,
 }: {
-  bookTitle: string;
-  bookId: number;
+  book: BookSearch;
   owned: boolean;
 }) {
   const initialState: BookState = {};
-  const addBookWithId = addOwnedBook.bind(null, bookId);
+  const addBookWithId = addOwnedBook.bind(null, book.id);
   const [state, formAction, isPending] = useActionState(
     addBookWithId,
     initialState,
@@ -22,7 +20,7 @@ export default function BookSearchRow({
 
   return (
     <div className="flex justify-between border-b p-1">
-      {bookTitle}
+      <div>{book.title}</div>
       <form action={formAction}>
         <Button
           type="submit"
