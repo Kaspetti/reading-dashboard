@@ -1,4 +1,4 @@
-import { books, users } from "@/db/schema";
+import { works, users } from "@/db/schema";
 import "dotenv/config";
 import { db } from "@/db/client";
 
@@ -14,6 +14,6 @@ export async function fetchUsers() {
 }
 
 export async function fetchBooks() {
-  const result = await db.select().from(books);
+  const result = await db.select().from(works);
   return result;
 }

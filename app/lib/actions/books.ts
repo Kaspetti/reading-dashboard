@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/client";
-import { books, ownedBooks } from "@/db/schema";
+import { works, ownedBooks } from "@/db/schema";
 import { createBookFormSchema } from "@/db/validators";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -38,7 +38,7 @@ export async function createBook(
   }
 
   try {
-    await db.insert(books).values({
+    await db.insert(works).values({
       ...parsed.data,
     });
   } catch {
@@ -55,17 +55,17 @@ export async function searchBooks(query: string, limit = 10) {
 
   return db
     .select({
-      id: books.id,
-      title: books.title,
+      id: works.id,
+      title: works.title,
     })
-    .from(books)
+    .from(works)
     .where(
       and(
-        books.verified,
-        sql`${books.title} ILIKE ${"%" + query + "%"} OR ${books.title} <% ${query}`,
+        works.verified,
+        sql`${works.title} ILIKE ${"%" + query + "%"} OR ${works.title} <% ${query}`,
       ),
     )
-    .orderBy(desc(sql`word_similarity(${query}, ${books.title})`))
+    .orderBy(desc(sql`word_similarity(${query}, ${works.title})`))
     .limit(limit);
 }
 
@@ -73,7 +73,7 @@ export async function getOwnedBooks() {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const result = await db.query.books.findMany({
+  const result = await db.query.works.findMany({
     columns: {
       id: true,
       title: true,

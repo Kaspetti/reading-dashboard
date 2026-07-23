@@ -3,7 +3,7 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { books, users } from "./schema";
+import { works, users } from "./schema";
 import { z } from "zod";
 
 export const insertUserSchema = createInsertSchema(users, {
@@ -48,7 +48,7 @@ export const loginUserFormSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
-export const insertBookSchema = createInsertSchema(books, {
+export const insertBookSchema = createInsertSchema(works, {
   title: z
     .string()
     .min(1, "Book title is required.")
@@ -67,8 +67,8 @@ export const insertBookSchema = createInsertSchema(books, {
       error: "ISBN must follow ISBN-10 or ISBN-13 format.",
     }),
 });
-export const selectBookSchema = createSelectSchema(books);
-export const updateBookSchema = createUpdateSchema(books);
+export const selectBookSchema = createSelectSchema(works);
+export const updateBookSchema = createUpdateSchema(works);
 
 export const createBookFormSchema = insertBookSchema.omit({
   createdAt: true,

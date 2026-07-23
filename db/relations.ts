@@ -3,12 +3,12 @@ import * as schema from "./schema";
 
 export const relations = defineRelations(schema, (r) => ({
   users: {
-    ownedBooks: r.many.books({
+    ownedBooks: r.many.works({
       from: r.users.id.through(r.ownedBooks.userId),
-      to: r.books.id.through(r.ownedBooks.bookId),
+      to: r.works.id.through(r.ownedBooks.bookId),
     }),
   },
-  books: {
+  works: {
     owners: r.many.users(),
   },
 }));

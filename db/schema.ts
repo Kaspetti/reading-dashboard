@@ -29,7 +29,7 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp().notNull(),
 });
 
-export const books = pgTable("books", {
+export const works = pgTable("works", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   title: text().notNull(),
   author: text().notNull(),
@@ -43,6 +43,10 @@ export const books = pgTable("books", {
     .$onUpdate(() => new Date()),
 });
 
+export const editions = pgTable("editions", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+});
+
 export const ownedBooks = pgTable(
   "owned_books",
   {
@@ -52,7 +56,7 @@ export const ownedBooks = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     bookId: integer()
       .notNull()
-      .references(() => books.id, { onDelete: "restrict" }),
+      .references(() => works.id, { onDelete: "restrict" }),
     createdAt: timestamp().notNull().defaultNow(),
   },
   (table) => [
@@ -64,7 +68,7 @@ export const ownedBooks = pgTable(
 export const bookVerificationAttempts = pgTable("book_verification_attempts", {
   bookId: integer()
     .primaryKey()
-    .references(() => books.id, { onDelete: "cascade" }),
+    .references(() => works.id, { onDelete: "cascade" }),
   isbn: text().notNull(),
   attempts: integer().notNull().default(0),
   firstAttempt: timestamp().notNull().defaultNow(),
