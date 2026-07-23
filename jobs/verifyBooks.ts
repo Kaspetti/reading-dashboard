@@ -1,8 +1,8 @@
 import "dotenv/config";
 
 import { db, pool } from "@/db/client";
-import { books } from "@/db/schema";
-import { and, eq, isNotNull, not } from "drizzle-orm";
+import { books, bookVerificationAttempts } from "@/db/schema";
+import { and, eq, isNotNull, not, sql } from "drizzle-orm";
 import z from "zod";
 
 const OPENLIBRARY_BASE_URL = "https://openlibrary.org/api/books";
@@ -56,17 +56,38 @@ async function verifyBatch(batch: (typeof books.$inferSelect)[]) {
   }
 
   for (const book of batch) {
-    const match = data[`ISBN:${book.isbn}`];
-    if (!match) continue;
+    if (!book.isbn) continue;
 
-    await db
-      .update(books)
-      .set({
-        verified: true,
-        title: match.title ?? "",
-        author: match.authors?.[0]?.name ?? "",
-      })
-      .where(eq(books.id, book.id));
+    const match = data[`ISBN:${book.isbn}`];
+    if (!match) {
+      await db
+        .insert(bookVerificationAttempts)
+        .values({ bookId: book.id, isbn: book.isbn, attempts: 1 })
+        .onConflictDoUpdate({
+          target: bookVerificationAttempts.bookId,
+          set: {
+            attempts: sql`${bookVerificationAttempts.attempts} + 1`,
+            latestAttempt: new Date(),
+          },
+        });
+
+      continue;
+    }
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(books)
+        .set({
+          verified: true,
+          title: match.title ?? "",
+          author: match.authors?.[0]?.name ?? "",
+        })
+        .where(eq(books.id, book.id));
+
+      await tx
+        .delete(bookVerificationAttempts)
+        .where(eq(bookVerificationAttempts.bookId, book.id));
+    });
   }
 }
 

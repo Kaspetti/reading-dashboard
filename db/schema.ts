@@ -60,3 +60,13 @@ export const ownedBooks = pgTable(
     index().on(table.userId),
   ],
 );
+
+export const bookVerificationAttempts = pgTable("book_verification_attempts", {
+  bookId: integer()
+    .primaryKey()
+    .references(() => books.id, { onDelete: "cascade" }),
+  isbn: text().notNull(),
+  attempts: integer().notNull().default(0),
+  firstAttempt: timestamp().notNull().defaultNow(),
+  latestAttempt: timestamp().notNull().defaultNow(),
+});
