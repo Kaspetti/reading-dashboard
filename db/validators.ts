@@ -10,6 +10,10 @@ export const insertUserSchema = createInsertSchema(users, {
   email: z.email("Must be a valid email."),
   username: z
     .string()
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Username must only contain letters, numbers, -, _.",
+    )
     .min(3, "Username must be between 3 and 15 characters.")
     .max(15, "Username must be between 3 and 15 characters."),
 });
@@ -27,11 +31,20 @@ export const createUserFormSchema = insertUserSchema
     password: z
       .string()
       .min(8, "Password must be atleast 8 characters long.")
-      .max(72, "Password cannot be longer than 72 characters."),
+      .max(72, "Password cannot be longer than 72 characters.")
+      .regex(
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+        "Password must contain atleast one of each of the following: Uppercase letter, lowercase letter, number, symbol (#?!@$%^&*-).",
+      ),
   });
 
 export const loginUserFormSchema = z.object({
-  identifier: z.string().min(1, "Username or Email is required."),
+  identifier: z
+    .string()
+    .transform((val) => val.trim())
+    .refine((val) => val.length > 0, {
+      error: "Username or Email is required.",
+    }),
   password: z.string().min(1, "Password is required."),
 });
 
