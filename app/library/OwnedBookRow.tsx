@@ -16,7 +16,12 @@ export default function OwnedBookRow({ book }: { book: OwnedBook }) {
     <div className="flex justify-between w-150">
       <div>
         {book.title}
-        {!book.verified && <span className="text-gray-500"> unverified</span>}
+        {!book.verified && !book.isbn && (
+          <span className="text-gray-500"> unverified</span>
+        )}
+        {!book.verified && book.isbn && (
+          <span className="text-gray-500"> verification pending</span>
+        )}
       </div>
       <form action={formAction}>
         <Button

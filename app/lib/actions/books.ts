@@ -77,6 +77,7 @@ export async function getOwnedBooks() {
     columns: {
       id: true,
       title: true,
+      isbn: true,
       verified: true,
     },
     where: {

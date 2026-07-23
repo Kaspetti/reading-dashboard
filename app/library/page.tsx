@@ -4,6 +4,7 @@ import OwnedBookRow from "./OwnedBookRow";
 
 export default async function Library() {
   const ownedBooks = await getOwnedBooks();
+  ownedBooks.sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <LibraryClient ownedBooks={new Set(ownedBooks.map((o) => o.id))}>
