@@ -1,0 +1,1 @@
+ALTER TABLE "books" ALTER COLUMN "verified" SET DEFAULT false;

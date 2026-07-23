@@ -6,6 +6,7 @@ import {
   text,
   unique,
   index,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -34,6 +35,7 @@ export const books = pgTable("books", {
   author: text().notNull(),
   pages: integer().notNull(),
   isbn: text().unique(),
+  verified: boolean().default(false),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp()
     .notNull()
