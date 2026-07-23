@@ -7,6 +7,7 @@ import z from "zod";
 
 const OPENLIBRARY_BASE_URL = "https://openlibrary.org/api/books";
 const TIMEOUT_MS = 5000;
+const BATCH_SIZE = 20;
 
 const OpenLibraryBookSchema = z.object({
   title: z.string().optional(),
@@ -15,7 +16,7 @@ const OpenLibraryBookSchema = z.object({
 
 const OpenLibraryResponseSchema = z.record(z.string(), OpenLibraryBookSchema);
 
-export async function verifyBooks() {
+async function verifyBooks() {
   const unverifiedBooks = await db
     .select()
     .from(books)
@@ -25,10 +26,16 @@ export async function verifyBooks() {
     return;
   }
 
+  for (let i = 0; i < unverifiedBooks.length; i += BATCH_SIZE) {
+    await verifyBatch(unverifiedBooks.slice(i, i + BATCH_SIZE));
+  }
+}
+
+async function verifyBatch(batch: (typeof books.$inferSelect)[]) {
   const url = new URL(OPENLIBRARY_BASE_URL);
   url.searchParams.set(
     "bibkeys",
-    unverifiedBooks.map((book) => `ISBN:${book.isbn}`).join(","),
+    batch.map((book) => `ISBN:${book.isbn}`).join(","),
   );
   url.searchParams.set("format", "json");
   url.searchParams.set("jscmd", "data");
@@ -48,7 +55,7 @@ export async function verifyBooks() {
     clearTimeout(timer);
   }
 
-  for (const book of unverifiedBooks) {
+  for (const book of batch) {
     const match = data[`ISBN:${book.isbn}`];
     if (!match) continue;
 
