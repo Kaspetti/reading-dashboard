@@ -1,10 +1,13 @@
 import LibraryClient from "./LibraryClient";
-import { getOwnedBooks } from "../lib/actions/books";
+import { getUserBookEntries } from "../lib/actions/books";
 import OwnedBookRow from "./OwnedBookRow";
+import { bookDisplayFields } from "@/app/lib/books";
 
 export default async function Library() {
-  const ownedBooks = await getOwnedBooks();
-  ownedBooks.sort((a, b) => a.title.localeCompare(b.title));
+  const ownedBooks = await getUserBookEntries();
+  ownedBooks.sort((a, b) =>
+    bookDisplayFields(a).title.localeCompare(bookDisplayFields(b).title),
+  );
 
   return (
     <LibraryClient ownedBooks={new Set(ownedBooks.map((o) => o.id))}>

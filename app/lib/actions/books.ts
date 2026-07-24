@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/client";
-import { works, ownedBooks } from "@/db/schema";
+import { works, userBookEntry } from "@/db/schema";
 import { createBookFormSchema } from "@/db/validators";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -16,8 +16,8 @@ export type BookState = {
 
 export type BooksSearch = Awaited<ReturnType<typeof searchBooks>>;
 export type BookSearch = BooksSearch[number];
-export type OwnedBooks = Awaited<ReturnType<typeof getOwnedBooks>>;
-export type OwnedBook = OwnedBooks[number];
+export type UserBookEntries = Awaited<ReturnType<typeof getUserBookEntries>>;
+export type UserBookEntry = UserBookEntries[number];
 
 export async function createBook(
   _prevState: BookState,
@@ -69,21 +69,28 @@ export async function searchBooks(query: string, limit = 10) {
     .limit(limit);
 }
 
-export async function getOwnedBooks() {
+export async function getUserBookEntries() {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const result = await db.query.works.findMany({
+  const result = await db.query.userBookEntry.findMany({
     columns: {
       id: true,
-      title: true,
+      rawTitle: true,
+      rawAuthor: true,
+      rawPages: true,
       isbn: true,
-      verified: true,
+    },
+    with: {
+      edition: {
+        with: {
+          work: true,
+        },
+      },
     },
     where: {
-      owners: {
-        id: user.id,
-      },
+      userId: user.id,
+      shelfStatus: "owned",
     },
   });
 
@@ -95,46 +102,46 @@ export async function addOwnedBook(
   _prevState: BookState,
   _formData: FormData,
 ): Promise<BookState> {
-  const user = await getCurrentUser();
-  if (!user) {
-    return { error: "Must be logged in to add owned book." };
-  }
-
-  try {
-    await db.insert(ownedBooks).values({
-      userId: user.id,
-      bookId: bookId,
-    });
-  } catch {
-    return { error: "Database error: could not add book to owned." };
-  }
-
-  revalidatePath("/library");
+  // const user = await getCurrentUser();
+  // if (!user) {
+  //   return { error: "Must be logged in to add owned book." };
+  // }
+  //
+  // try {
+  //   await db.insert(ownedBooks).values({
+  //     userId: user.id,
+  //     bookId: bookId,
+  //   });
+  // } catch {
+  //   return { error: "Database error: could not add book to owned." };
+  // }
+  //
+  // revalidatePath("/library");
 
   return { success: "Successfully added book to owned." };
 }
 
-export async function removeOwnedBook(
-  bookId: number,
+export async function removeUserBookEntry(
+  id: number,
   _prevState: BookState,
   _formData: FormData,
 ): Promise<BookState> {
   const user = await getCurrentUser();
   if (!user) {
-    return { error: "Must be logged in to remove owned book." };
+    return { error: "Must be logged in to remove book entry." };
   }
 
   try {
     await db
-      .delete(ownedBooks)
-      .where(
-        and(eq(ownedBooks.bookId, bookId), eq(ownedBooks.userId, user.id)),
-      );
+      .delete(userBookEntry)
+      .where(and(eq(userBookEntry.id, id), eq(userBookEntry.userId, user.id)));
   } catch {
-    return { error: "Database error: coould not remove book from owned." };
+    return {
+      error: "Database error: could not remove book from user's book entries.",
+    };
   }
 
   revalidatePath("/library");
 
-  return { success: "Successfully removed book from owned." };
+  return { success: "Successfully removed book from user's book entries." };
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "editions" ALTER COLUMN "workId" DROP NOT NULL;

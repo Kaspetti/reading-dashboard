@@ -1,0 +1,19 @@
+ALTER TABLE "editions" RENAME COLUMN "olEditionId" TO "ol_edition_id";--> statement-breakpoint
+ALTER TABLE "editions" RENAME COLUMN "workId" TO "work_id";--> statement-breakpoint
+ALTER TABLE "editions" RENAME COLUMN "createdAt" TO "created_at";--> statement-breakpoint
+ALTER TABLE "editions" RENAME COLUMN "updatedAt" TO "updated_at";--> statement-breakpoint
+ALTER TABLE "sessions" RENAME COLUMN "sessionId" TO "session_id";--> statement-breakpoint
+ALTER TABLE "sessions" RENAME COLUMN "userId" TO "user_id";--> statement-breakpoint
+ALTER TABLE "sessions" RENAME COLUMN "expiresAt" TO "expires_at";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "userId" TO "user_id";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "editionId" TO "edition_id";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "rawTitle" TO "raw_title";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "rawAuthor" TO "raw_author";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "rawPages" TO "raw_pages";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "shelfStatus" TO "shelf_status";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "createdAt" TO "created_at";--> statement-breakpoint
+ALTER TABLE "user_book_entry" RENAME COLUMN "updatedAt" TO "updated_at";--> statement-breakpoint
+ALTER TABLE "users" RENAME COLUMN "displayName" TO "display_name";--> statement-breakpoint
+ALTER TABLE "users" RENAME COLUMN "passwordHash" TO "password_hash";--> statement-breakpoint
+ALTER TABLE "users" RENAME COLUMN "createdAt" TO "created_at";--> statement-breakpoint
+ALTER TABLE "users" RENAME COLUMN "updatedAt" TO "updated_at";

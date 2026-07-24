@@ -1,25 +1,32 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { BookState, OwnedBook, removeOwnedBook } from "@/app/lib/actions/books";
+import {
+  BookState,
+  UserBookEntry,
+  removeUserBookEntry,
+} from "@/app/lib/actions/books";
 import { useActionState } from "react";
+import { bookDisplayFields } from "../lib/books";
 
-export default function OwnedBookRow({ book }: { book: OwnedBook }) {
+export default function OwnedBookRow({ book }: { book: UserBookEntry }) {
   const initialState: BookState = {};
-  const removeBookById = removeOwnedBook.bind(null, book.id);
+  const removeBookById = removeUserBookEntry.bind(null, book.id);
   const [state, formAction, isPending] = useActionState(
     removeBookById,
     initialState,
   );
 
+  const bookDisplay = bookDisplayFields(book);
+
   return (
     <div className="flex justify-between w-150">
       <div>
-        {book.title}
-        {!book.verified && !book.isbn && (
+        {bookDisplay.title}
+        {!book.edition && !book.isbn && (
           <span className="text-gray-500"> unverified</span>
         )}
-        {!book.verified && book.isbn && (
+        {!book.edition && book.isbn && (
           <span className="text-gray-500"> verification pending</span>
         )}
       </div>

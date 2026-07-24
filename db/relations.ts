@@ -3,9 +3,9 @@ import * as schema from "./schema";
 
 export const relations = defineRelations(schema, (r) => ({
   users: {
-    ownedBooks: r.many.works({
-      from: r.users.id.through(r.ownedBooks.userId),
-      to: r.works.id.through(r.ownedBooks.bookId),
+    bookEntries: r.many.userBookEntry({
+      from: r.users.id,
+      to: r.userBookEntry.userId,
     }),
   },
   editions: {
@@ -13,9 +13,16 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.editions.workId,
       to: r.works.id,
     }),
+    bookEntries: r.many.userBookEntry(),
   },
   works: {
-    owners: r.many.users(),
     editions: r.many.editions(),
+  },
+  userBookEntry: {
+    user: r.one.users(),
+    edition: r.one.editions({
+      from: r.userBookEntry.editionId,
+      to: r.editions.id,
+    }),
   },
 }));
